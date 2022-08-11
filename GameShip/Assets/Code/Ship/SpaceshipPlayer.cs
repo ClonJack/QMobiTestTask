@@ -8,23 +8,38 @@ namespace Code.Ship
 {
     public class SpaceshipPlayer : BaseShip
     {
-        [SerializeField] private float _speedShip;
+        [Header("Option ship")] [SerializeField]
+        private float _smothSpeed;
+
+        [SerializeField] private float _maxSpeed;
         [SerializeField] private float _rotationSpeedShip;
-
         [SerializeField] private float _durationLazer;
+        [SerializeField] private float _targetMove;
+        [SerializeField] private LayerMask _layerAttack;
+        [SerializeField] private int _distanceMoveShot;
+        [SerializeField] private float _timeMoveShot;
+        [SerializeField] private float _distanceDetectedShot;
 
+        [Header("Option Bound ")] [SerializeField]
+        private Vector3 _minBoundCamera;
 
-        [SerializeField] private List<ParticleSystem> _particleGun;
+        [SerializeField] private Vector3 _maxBoundCamera;
 
-        [SerializeField] private KeyCode _keyOnAttack;
+        [Header("Input")] [SerializeField] private KeyCode _keyOnAttack;
+        [SerializeField] private float _smothSteepAxis;
 
-        [SerializeField] private ObjectPool _objectPool;
-
+        [Header("Effects ")] [SerializeField] private List<ParticleSystem> _particleGun;
+        [Header("Pool")] [SerializeField] private ObjectPool _objectPool;
 
         private void Awake()
         {
-            SetMove(new MovePlayerBehavior(_speedShip, _rotationSpeedShip, transform));
-            SetAttack(new AttackPlayerBehavior(_particleGun, _objectPool, _durationLazer, this));
+            SetMove(new MovePlayerBehavior(_smothSpeed, _maxSpeed,
+                _rotationSpeedShip,
+                transform, Camera.main.ViewportToWorldPoint(_minBoundCamera),
+                Camera.main.ViewportToWorldPoint(_maxBoundCamera), _smothSteepAxis, _targetMove));
+
+            SetAttack(new AttackPlayerBehavior(_particleGun, _objectPool, _durationLazer,
+                this, _layerAttack, _distanceMoveShot, _timeMoveShot, _distanceDetectedShot));
         }
 
 
@@ -36,9 +51,6 @@ namespace Code.Ship
             {
                 Attack.Attack();
             }
-
-            var gg = _particleGun[0].transform.up * 15 - _particleGun[0].transform.position;
-            Debug.DrawLine(_particleGun[0].transform.position, gg, Color.red);
         }
     }
 }

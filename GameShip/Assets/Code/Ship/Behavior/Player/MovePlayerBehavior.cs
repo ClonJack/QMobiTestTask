@@ -1,5 +1,4 @@
 ﻿using Code.Ship.Interfaces;
-using TMPro;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Player
@@ -7,55 +6,69 @@ namespace Code.Ship.Behavior.Player
     [System.Serializable]
     public class MovePlayerBehavior : IMove
     {
-        private readonly float _speedShip;
+        private readonly float _smothSpeed;
+        private readonly float _maxSmothSpeed;
         private readonly float _rotationSpeedShip;
         private readonly Transform _owner;
+        private readonly Vector3 _minBoundCamera;
+        private readonly float _smothSteepAxis;
+        private readonly float _targetMove;
+        private readonly Vector3 _maxBoundCamera;
 
         private Vector2 _currentVelocity;
 
-        public MovePlayerBehavior(float speedShip, float rotationSpeedShip, Transform owner)
+        private float _axisVertical;
+
+
+        public MovePlayerBehavior(float smothSpeed, float maxSmothSpeed, float rotationSpeedShip, Transform owner,
+            Vector3 minBoundCamera, Vector3 maxBoundCamera, float smothSteepAxis, float targetMove)
         {
-            _speedShip = speedShip;
+            _smothSpeed = smothSpeed;
+            _maxSmothSpeed = maxSmothSpeed;
             _rotationSpeedShip = rotationSpeedShip;
             _owner = owner;
+            _minBoundCamera = minBoundCamera;
+            _smothSteepAxis = smothSteepAxis;
+            _targetMove = targetMove;
+            _maxBoundCamera = maxBoundCamera;
         }
-
-        private Vector3 min => Camera.main.ViewportToWorldPoint(new Vector2(0, 0));
-        private Vector3 max => Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
-
 
         public void Move()
         {
-            /*     if (_owner.position.x > max.x || _owner.position.x < min.x)
-                 {
-                     return;
-                 }
-     
-                 // улетела пуля за екран по оси у
-                 if (_owner.position.y > max.y || _owner.position.y < min.y)
-                 {
-                     return;
-                 }*/
+            _axisVertical =
+                Mathf.SmoothStep(_axisVertical, Input.GetAxis("Vertical"), _smothSteepAxis * Time.deltaTime);
+            if (_axisVertical != 0)
+            {
+                var target = (_owner.up * (_targetMove * _axisVertical));
 
+                var smothDamp = Vector2.SmoothDamp(_owner.transform.position, target, ref
+                    _currentVelocity,
+                    _smothSpeed, _maxSmothSpeed);
 
-            //  Vector3 move = (Input.GetAxis("Vertical") * _speedShip);
-            var translation = Input.GetAxis("Vertical") * _speedShip /** Time.deltaTime*/;
-            //var translation = _owner.up * (10 * Input.GetAxis("Vertical"));
+                if (smothDamp.y > _maxBoundCamera.y)
+                {
+                    smothDamp = -smothDamp + Vector2.up;
+                }
 
-            var target = (_owner.up * (100 * Input.GetAxis("Vertical")));
+                else if (smothDamp.y < _minBoundCamera.y)
+                {
+                    smothDamp = -smothDamp + Vector2.down;
+                }
+                else if (smothDamp.x > _maxBoundCamera.x)
+                {
+                    smothDamp = -smothDamp + Vector2.right;
+                }
+
+                else if (smothDamp.x < _minBoundCamera.x)
+                {
+                    smothDamp = -smothDamp + Vector2.left;
+                }
+
+                _owner.transform.position = smothDamp;
+            }
+
             var rotation = -(Input.GetAxis("Horizontal") * _rotationSpeedShip) * Time.deltaTime;
-
-            _owner.transform.position =
-                Vector2.SmoothDamp(_owner.transform.position, target, ref _currentVelocity, 1f, 10f);
-
-                //  _owner.Translate(target * Time.deltaTime,Space.World);
-
-          
-           
             _owner.Rotate(0, 0, rotation);
-
-
-            Debug.DrawRay(_owner.transform.position, _owner.up * 5, Color.green);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,15 @@ namespace Code.Pool
         [SerializeField] private GameObject _objectOnSpawn;
 
         [SerializeField] private List<GameObject> _objectsInPool;
+
+        private void Awake()
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                _objectsInPool.Add(transform.GetChild(i).gameObject);
+                _objectsInPool[i].gameObject.SetActive(false);
+            }
+        }
 
         public Transform GetFreeObject()
         {

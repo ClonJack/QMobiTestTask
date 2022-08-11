@@ -1,3 +1,4 @@
+using System;
 using Code.Ship.Interfaces;
 using UnityEngine;
 
@@ -7,6 +8,10 @@ namespace Code.Ship.Base
     {
         protected IMove Move;
         protected IAttack Attack;
+
+        protected Action TakeDamageAction;
+
+        public void TakeDamage() => TakeDamageAction?.Invoke();
 
         protected void SetMove(IMove move)
         {
