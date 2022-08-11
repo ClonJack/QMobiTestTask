@@ -1,4 +1,7 @@
-﻿using Code.Ship.Interfaces;
+﻿using Code.Ship.Data.Camera;
+using Code.Ship.Data.Input;
+using Code.Ship.Data.Ship;
+using Code.Ship.Interfaces;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Player
@@ -6,44 +9,39 @@ namespace Code.Ship.Behavior.Player
     [System.Serializable]
     public class MovePlayerBehavior : IMove
     {
-        private readonly float _smothSpeed;
-        private readonly float _maxSmothSpeed;
-        private readonly float _rotationSpeedShip;
+        private readonly ShipOptionMove _shipOption;
+        private readonly OptionInput _optionInput;
         private readonly Transform _owner;
-        private readonly Vector3 _minBoundCamera;
-        private readonly float _smothSteepAxis;
-        private readonly float _targetMove;
         private readonly Vector3 _maxBoundCamera;
+        private readonly Vector3 _minBoundCamera;
+
 
         private Vector2 _currentVelocity;
-
         private float _axisVertical;
 
 
-        public MovePlayerBehavior(float smothSpeed, float maxSmothSpeed, float rotationSpeedShip, Transform owner,
-            Vector3 minBoundCamera, Vector3 maxBoundCamera, float smothSteepAxis, float targetMove)
+        public MovePlayerBehavior(ShipOptionMove shipOption, OptionBoundCamera optionBoundCamera,
+            OptionInput optionInput, Transform owner)
         {
-            _smothSpeed = smothSpeed;
-            _maxSmothSpeed = maxSmothSpeed;
-            _rotationSpeedShip = rotationSpeedShip;
+            _shipOption = shipOption;
+            _optionInput = optionInput;
+            _maxBoundCamera = Camera.main.ViewportToWorldPoint(optionBoundCamera.MaxBoundCamera);
+            _minBoundCamera = Camera.main.ViewportToWorldPoint(optionBoundCamera.MinBoundCamera);
             _owner = owner;
-            _minBoundCamera = minBoundCamera;
-            _smothSteepAxis = smothSteepAxis;
-            _targetMove = targetMove;
-            _maxBoundCamera = maxBoundCamera;
         }
+
 
         public void Move()
         {
-            _axisVertical =
-                Mathf.SmoothStep(_axisVertical, Input.GetAxis("Vertical"), _smothSteepAxis * Time.deltaTime);
+            _axisVertical = Mathf.SmoothStep(_axisVertical, Input.GetAxis("Vertical"),
+                _optionInput.SmothStepForwad * Time.deltaTime);
             if (_axisVertical != 0)
             {
-                var target = (_owner.up * (_targetMove * _axisVertical));
+                var target = (_owner.up * (_shipOption.TargetMove * _axisVertical));
 
                 var smothDamp = Vector2.SmoothDamp(_owner.transform.position, target, ref
                     _currentVelocity,
-                    _smothSpeed, _maxSmothSpeed);
+                    _shipOption.SmothSpeed, _shipOption.MaxSpeed);
 
                 if (smothDamp.y > _maxBoundCamera.y)
                 {
@@ -67,7 +65,7 @@ namespace Code.Ship.Behavior.Player
                 _owner.transform.position = smothDamp;
             }
 
-            var rotation = -(Input.GetAxis("Horizontal") * _rotationSpeedShip) * Time.deltaTime;
+            var rotation = -(Input.GetAxis("Horizontal") * _shipOption.RotationSpeedShip) * Time.deltaTime;
             _owner.Rotate(0, 0, rotation);
         }
     }

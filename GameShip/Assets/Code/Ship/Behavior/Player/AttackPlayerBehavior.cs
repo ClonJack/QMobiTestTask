@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Code.Pool;
 using Code.Ship.Base;
+using Code.Ship.Data.Ship;
 using Code.Ship.Interfaces;
 using UnityEngine;
 
@@ -9,27 +10,18 @@ namespace Code.Ship.Behavior.Player
 {
     public class AttackPlayerBehavior : IAttack
     {
+        private readonly ShipOptionShot _shipOptionShot;
+        private readonly MonoBehaviour _monoBehaviour;
         private readonly List<ParticleSystem> _particleGun;
         private readonly ObjectPool _objectPool;
-        private readonly float _speedMoveLazer;
-        private readonly MonoBehaviour _monoBehaviour;
-        private readonly LayerMask _layerAttack;
-        private readonly int _distanceMove;
-        private readonly float _timeMove;
-        private readonly float _distanceDetectedShot;
 
-
-        public AttackPlayerBehavior(List<ParticleSystem> particleGun, ObjectPool objectPool, float speedMoveLazer,
-            MonoBehaviour monoBehaviour, LayerMask layerAttack,int distanceMove,float timeMove,float distanceDetectedShot)
+        public AttackPlayerBehavior(ShipOptionShot shipOptionShot,MonoBehaviour monoBehaviour,List<ParticleSystem> particleGun,
+            ObjectPool objectPool)
         {
+            _shipOptionShot = shipOptionShot;
+            _monoBehaviour = monoBehaviour;
             _particleGun = particleGun;
             _objectPool = objectPool;
-            _speedMoveLazer = speedMoveLazer;
-            _monoBehaviour = monoBehaviour;
-            _layerAttack = layerAttack;
-            _distanceMove = distanceMove;
-            _timeMove = timeMove;
-            _distanceDetectedShot = distanceDetectedShot;
         }
 
         public void Attack()
@@ -48,7 +40,7 @@ namespace Code.Ship.Behavior.Player
             var ship = _monoBehaviour.transform;
             lazer.rotation = ship.rotation;
 
-            _monoBehaviour.StartCoroutine(Shot(lazer, gun.transform.up * _distanceMove));
+            _monoBehaviour.StartCoroutine(Shot(lazer, gun.transform.up * _shipOptionShot.DistanceMoveLazer));
         }
 
 
@@ -59,7 +51,7 @@ namespace Code.Ship.Behavior.Player
             {
                 RaycastHit2D hit =
                     Physics2D.Raycast(lazer.transform.position, lazer.transform.up,
-                        _distanceDetectedShot, _layerAttack);
+                        _shipOptionShot.DistanceDetectedShot, _shipOptionShot.LayerAttack);
 
                 if (hit.collider)
                 {
@@ -71,10 +63,10 @@ namespace Code.Ship.Behavior.Player
                     }
                 }
 
-                lazer.Translate(target * (_speedMoveLazer * Time.deltaTime), Space.World);
+                lazer.Translate(target * (_shipOptionShot.SpeedMoveLazer * Time.deltaTime), Space.World);
                 timeElapsed += Time.deltaTime;
 
-                if (timeElapsed > _timeMove)
+                if (timeElapsed > _shipOptionShot.TimeAliveLazer)
                 {
                     _objectPool.ReturnToPool(lazer.gameObject);
                     yield break;

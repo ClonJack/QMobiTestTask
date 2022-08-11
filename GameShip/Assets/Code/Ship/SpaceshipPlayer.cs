@@ -2,55 +2,40 @@
 using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Behavior.Player;
+using Code.Ship.Data;
+using Code.Ship.Data.Camera;
+using Code.Ship.Data.Input;
+using Code.Ship.Data.Ship;
 using UnityEngine;
 
 namespace Code.Ship
 {
     public class SpaceshipPlayer : BaseShip
     {
-        [Header("Option ship")] [SerializeField]
-        private float _smothSpeed;
-
-        [SerializeField] private float _maxSpeed;
-        [SerializeField] private float _rotationSpeedShip;
-        [SerializeField] private float _durationLazer;
-        [SerializeField] private float _targetMove;
-        [SerializeField] private LayerMask _layerAttack;
-        [SerializeField] private int _distanceMoveShot;
-        [SerializeField] private float _timeMoveShot;
-        [SerializeField] private float _distanceDetectedShot;
-
-        [Header("Option Bound ")] [SerializeField]
-        private Vector3 _minBoundCamera;
-
-        [SerializeField] private Vector3 _maxBoundCamera;
-
-        [Header("Input")] [SerializeField] private KeyCode _keyOnAttack;
-        [SerializeField] private float _smothSteepAxis;
+        [SerializeField] private ShipOptionMove _shipOptionMove;
+        [SerializeField] private ShipOptionShot _shipOptionShot;
+        [SerializeField] private OptionInput _optionInput;
+        [SerializeField] private OptionBoundCamera _optionBoundCamera;
 
         [Header("Effects ")] [SerializeField] private List<ParticleSystem> _particleGun;
         [Header("Pool")] [SerializeField] private ObjectPool _objectPool;
 
         private void Awake()
         {
-            SetMove(new MovePlayerBehavior(_smothSpeed, _maxSpeed,
-                _rotationSpeedShip,
-                transform, Camera.main.ViewportToWorldPoint(_minBoundCamera),
-                Camera.main.ViewportToWorldPoint(_maxBoundCamera), _smothSteepAxis, _targetMove));
-
-            SetAttack(new AttackPlayerBehavior(_particleGun, _objectPool, _durationLazer,
-                this, _layerAttack, _distanceMoveShot, _timeMoveShot, _distanceDetectedShot));
+            SetMove(new MovePlayerBehavior(_shipOptionMove, _optionBoundCamera,_optionInput, transform));
+            SetAttack(new AttackPlayerBehavior(_shipOptionShot,this,_particleGun,_objectPool));
+            
         }
 
 
         private void Update()
         {
-            Move.Move();
-
-            if (Input.GetKeyDown(_keyOnAttack))
-            {
-                Attack.Attack();
-            }
+             Move.Move();
+ 
+             if (Input.GetKeyDown(_optionInput.KeyOnAttack))
+             {
+                 Attack.Attack();
+             }
         }
     }
 }
