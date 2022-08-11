@@ -1,7 +1,7 @@
-﻿using Code.Ship.Data.Camera;
+﻿using Code.Interfaces;
+using Code.Ship.Data.Camera;
 using Code.Ship.Data.Input;
 using Code.Ship.Data.Ship;
-using Code.Ship.Interfaces;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Player

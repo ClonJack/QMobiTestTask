@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Code.Interfaces;
 using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Data.Ship;
-using Code.Ship.Interfaces;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Player

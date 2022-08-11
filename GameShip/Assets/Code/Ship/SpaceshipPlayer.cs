@@ -2,7 +2,6 @@
 using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Behavior.Player;
-using Code.Ship.Data;
 using Code.Ship.Data.Camera;
 using Code.Ship.Data.Input;
 using Code.Ship.Data.Ship;

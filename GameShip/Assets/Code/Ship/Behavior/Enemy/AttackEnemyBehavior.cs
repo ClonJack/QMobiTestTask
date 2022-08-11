@@ -1,39 +1,32 @@
 ﻿using System.Collections;
+using Code.Interfaces;
 using Code.Pool;
 using Code.Ship.Base;
-using Code.Ship.Interfaces;
+using Code.Ship.Data.Ship;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Enemy
 {
     public class AttackEnemyBehavior : IAttack
     {
+        private readonly ShipOptionShot _shipOptionShot;
         private readonly ParticleSystem _particleGun;
-        private readonly ObjectPool _objectPool;
-        private readonly float _speedMoveLazer;
+        private readonly ObjectPool _lazerPool;
         private readonly MonoBehaviour _monoBehaviour;
-        private readonly float _timeUpdateMove;
-        private readonly LayerMask _maskAttack;
-        private readonly float _distanceAttack;
 
-
-        public AttackEnemyBehavior(ParticleSystem particleGun, ObjectPool objectPool, float speedMoveLazer,
-            MonoBehaviour monoBehaviour, float timeUpdateMove, LayerMask maskAttack, float distanceAttack)
+        public AttackEnemyBehavior(ShipOptionShot shipOptionShot,ParticleSystem particleGun, ObjectPool lazerPool,MonoBehaviour monoBehaviour)
         {
+            _shipOptionShot = shipOptionShot;
             _particleGun = particleGun;
-            _objectPool = objectPool;
-            _speedMoveLazer = speedMoveLazer;
+            _lazerPool = lazerPool;
             _monoBehaviour = monoBehaviour;
-            _timeUpdateMove = timeUpdateMove;
-            _maskAttack = maskAttack;
-            _distanceAttack = distanceAttack;
         }
 
         public void Attack()
         {
             _particleGun.Play();
 
-            var lazer = _objectPool.GetFreeObject();
+            var lazer = _lazerPool.GetFreeObject();
             lazer.gameObject.SetActive(true);
             lazer.SetParent(_particleGun.transform);
 
@@ -52,24 +45,25 @@ namespace Code.Ship.Behavior.Enemy
             while (true)
             {
                 RaycastHit2D hit =
-                    Physics2D.Raycast(lazer.transform.position, lazer.transform.up, _distanceAttack, _maskAttack);
+                    Physics2D.Raycast(lazer.transform.position, lazer.transform.up, 
+                        _shipOptionShot.DistanceDetectedShot, _shipOptionShot.LayerAttack);
 
                 if (hit.collider)
                 {
                     if (hit.transform.TryGetComponent(out BaseShip baseShip))
                     {
                         Debug.Log(hit.collider.name);
-                        _objectPool.ReturnToPool(lazer.gameObject);
+                        _lazerPool.ReturnToPool(lazer.gameObject);
                         yield break;
                     }
                 }
 
-                lazer.Translate(target * (_speedMoveLazer * Time.deltaTime), Space.World);
+                lazer.Translate(target * (_shipOptionShot.SpeedMoveLazer * Time.deltaTime), Space.World);
                 timeElapsed += Time.deltaTime;
 
-                if (timeElapsed > _timeUpdateMove)
+                if (timeElapsed > _shipOptionShot.TimeAliveLazer)
                 {
-                    _objectPool.ReturnToPool(lazer.gameObject);
+                    _lazerPool.ReturnToPool(lazer.gameObject);
                     yield break;
                 }
 

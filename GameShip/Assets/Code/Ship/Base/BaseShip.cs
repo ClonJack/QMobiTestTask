@@ -1,5 +1,5 @@
 using System;
-using Code.Ship.Interfaces;
+using Code.Interfaces;
 using UnityEngine;
 
 namespace Code.Ship.Base

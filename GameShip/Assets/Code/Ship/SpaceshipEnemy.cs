@@ -1,42 +1,39 @@
-﻿using System;
-using System.Collections;
-using Code.Pool;
+﻿using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Behavior.Enemy;
+using Code.Ship.Data.Ship;
 using UnityEngine;
 
 namespace Code.Ship
 {
     public class SpaceshipEnemy : BaseShip
     {
-        [Header("Option ship")] 
+        [SerializeField] private ShipOptionShot _shipOptionShot;
         [SerializeField] private float _timeOnShot;
-        [SerializeField] private float _speedMoveLazer;
-        [SerializeField] private float _timeOnUpdatePostionMove;
-        [SerializeField] private float _smothMove;
-        [SerializeField] private float _timeUpdateMove;
-        [SerializeField] private float _distanceDetectedAttack;
-        [SerializeField] private Vector3Int _randMove;
-        [SerializeField] private LayerMask _layerAttack;
 
+        [Header("Option Move Ship")] [SerializeField]
+        private float _timeOnUpdatePostionMove;
+
+        [SerializeField] private float _smothMove;
+        [SerializeField] private Vector3Int _randMove;
 
         [Header("Pool")] [SerializeField] private ObjectPool _lazerPool;
         [SerializeField] private ObjectPool _effectPool;
         [SerializeField] private ObjectPool _enemyPool;
 
-        [Header("Target Attack")]
-        [SerializeField] private Transform _player;
+        [Header("Target Attack")] [SerializeField]
+        private Transform _player;
 
-        [Header("Effect")]
-        [SerializeField] private ParticleSystem _particleGun;
+        [Header("Effect")] [SerializeField] private ParticleSystem _particleGun;
 
         private float _timeElapsedShot;
 
         private void Awake()
         {
-            SetMove(new MoveEnemyBehavior(transform, _player, _randMove, _timeOnUpdatePostionMove, _smothMove));
-            SetAttack(new AttackEnemyBehavior(_particleGun, _lazerPool, _speedMoveLazer, this,
-                _timeUpdateMove, _layerAttack, _distanceDetectedAttack));
+            SetMove(new MoveEnemyBehavior(transform, _player, _randMove,
+                _timeOnUpdatePostionMove, _smothMove));
+            SetAttack(new AttackEnemyBehavior(_shipOptionShot, _particleGun,
+                _lazerPool, this));
         }
 
         private void Update()
