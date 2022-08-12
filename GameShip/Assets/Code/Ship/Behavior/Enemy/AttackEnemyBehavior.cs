@@ -13,6 +13,9 @@ namespace Code.Ship.Behavior.Enemy
         private readonly ObjectPool _lazerPool;
         private readonly MonoBehaviour _monoBehaviour;
 
+        private Transform _lazer;
+
+        public Transform Lazer => _lazer;
 
         public AttackEnemyBehavior(ShipOptionShot shipOptionShot,
             ParticleSystem particleGun, ObjectPool lazerPool
@@ -28,26 +31,26 @@ namespace Code.Ship.Behavior.Enemy
         {
             _particleGun.Play();
 
-            var lazer = _lazerPool.GetFreeObject();
-            lazer.gameObject.SetActive(true);
-            lazer.SetParent(_particleGun.transform);
+            _lazer = _lazerPool.GetFreeObject();
+            _lazer.gameObject.SetActive(true);
+            _lazer.SetParent(_particleGun.transform);
 
-            lazer.localRotation = Quaternion.identity;
-            lazer.localPosition = Vector3.zero;
+            _lazer.localRotation = Quaternion.identity;
+            _lazer.localPosition = Vector3.zero;
 
-            lazer.SetParent(null);
+            _lazer.SetParent(null);
 
-            _monoBehaviour.StartCoroutine(Shot(lazer, -lazer.transform.up * 5));
+            _monoBehaviour.StartCoroutine(Shot(-_lazer.transform.up * 5));
         }
 
 
-        private IEnumerator Shot(Transform lazer, Vector3 target)
+        private IEnumerator Shot(Vector3 target)
         {
             var timeElapsed = 0f;
             while (true)
             {
                 RaycastHit2D hit =
-                    Physics2D.Raycast(lazer.transform.position, lazer.transform.up,
+                    Physics2D.Raycast(_lazer.transform.position, _lazer.transform.up,
                         _shipOptionShot.DistanceDetectedShot, _shipOptionShot.LayerAttack);
 
                 if (hit.collider)
@@ -55,17 +58,18 @@ namespace Code.Ship.Behavior.Enemy
                     if (hit.transform.TryGetComponent(out IDamage damage))
                     {
                         damage.TakeDamage(_shipOptionShot.Damage);
-                        _lazerPool.ReturnToPool(lazer.gameObject);
+                        _lazerPool.ReturnToPool(_lazer.gameObject);
+                        _lazer = null;
                         yield break;
                     }
                 }
 
-                lazer.Translate(target * (_shipOptionShot.SpeedMoveLazer * Time.deltaTime), Space.World);
+                _lazer.Translate(target * (_shipOptionShot.SpeedMoveLazer * Time.deltaTime), Space.World);
                 timeElapsed += Time.deltaTime;
 
                 if (timeElapsed > _shipOptionShot.TimeAliveLazer)
                 {
-                    _lazerPool.ReturnToPool(lazer.gameObject);
+                    _lazerPool.ReturnToPool(_lazer.gameObject);
                     yield break;
                 }
 

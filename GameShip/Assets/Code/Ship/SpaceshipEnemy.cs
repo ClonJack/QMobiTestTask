@@ -29,13 +29,18 @@ namespace Code.Ship
 
         private float _timeElapsedShot;
 
+        private AttackEnemyBehavior _attackEnemyBehavior;
+
         private void Awake()
         {
             SetMove(new MoveEnemyBehavior(transform, _player, _randMove,
                 _timeOnUpdatePostionMove, _smothMove));
-            SetAttack(new AttackEnemyBehavior(_shipOptionShot, _particleGun,
-                _lazerPool, this));
+
+            _attackEnemyBehavior = new AttackEnemyBehavior(_shipOptionShot, _particleGun,
+                _lazerPool, this);
+            SetAttack(_attackEnemyBehavior);
         }
+
         private void Update()
         {
             Move.Move();
@@ -47,12 +52,16 @@ namespace Code.Ship
                 Attack.Attack();
             }
         }
+
         public void TakeDamage(float damage)
         {
             var explosion = _effectPool.GetFreeObject().GetComponent<ParticleSystem>();
             explosion.gameObject.SetActive(true);
             explosion.transform.position = transform.position;
             explosion.Play();
+
+            if (_attackEnemyBehavior.Lazer != null)
+                _lazerPool.ReturnToPool(_attackEnemyBehavior.Lazer.gameObject);
 
             _enemyPool.ReturnToPool(gameObject);
         }
