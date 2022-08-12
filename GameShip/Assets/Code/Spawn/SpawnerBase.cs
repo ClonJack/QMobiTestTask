@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Code.Ship.Spawn
+namespace Code.Spawn
 {
     public abstract class SpawnerBase : MonoBehaviour
     {
