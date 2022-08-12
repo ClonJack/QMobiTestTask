@@ -13,13 +13,17 @@ namespace Code.Ship.Behavior.Enemy
         private readonly ParticleSystem _particleGun;
         private readonly ObjectPool _lazerPool;
         private readonly MonoBehaviour _monoBehaviour;
+        private readonly IDamage _damage;
 
-        public AttackEnemyBehavior(ShipOptionShot shipOptionShot,ParticleSystem particleGun, ObjectPool lazerPool,MonoBehaviour monoBehaviour)
+        public AttackEnemyBehavior(ShipOptionShot shipOptionShot,
+            ParticleSystem particleGun, ObjectPool lazerPool
+            , MonoBehaviour monoBehaviour, IDamage damage)
         {
             _shipOptionShot = shipOptionShot;
             _particleGun = particleGun;
             _lazerPool = lazerPool;
             _monoBehaviour = monoBehaviour;
+            _damage = damage;
         }
 
         public void Attack()
@@ -45,14 +49,14 @@ namespace Code.Ship.Behavior.Enemy
             while (true)
             {
                 RaycastHit2D hit =
-                    Physics2D.Raycast(lazer.transform.position, lazer.transform.up, 
+                    Physics2D.Raycast(lazer.transform.position, lazer.transform.up,
                         _shipOptionShot.DistanceDetectedShot, _shipOptionShot.LayerAttack);
 
                 if (hit.collider)
                 {
-                    if (hit.transform.TryGetComponent(out BaseShip baseShip))
+                    if (hit.transform.TryGetComponent(out IDamage damage))
                     {
-                        Debug.Log(hit.collider.name);
+                        damage.TakeDamage();
                         _lazerPool.ReturnToPool(lazer.gameObject);
                         yield break;
                     }

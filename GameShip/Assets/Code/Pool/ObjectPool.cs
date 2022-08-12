@@ -58,7 +58,6 @@ namespace Code.Pool
             objectTooPool.transform.SetParent(transform);
             objectTooPool.transform.position = Vector3.zero;
             objectTooPool.SetActive(false);
-            
         }
     }
 }

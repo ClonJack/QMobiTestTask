@@ -1,10 +1,9 @@
-using System;
 using Code.Pool;
 using Code.Ship.Spawn;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Code
+namespace Code.Spawn.Enemy
 {
     public class SpawnerEnemy : SpawnerBase
     {

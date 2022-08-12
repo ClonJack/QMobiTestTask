@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Code.Pool;
 using Code.Ship.Spawn;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -11,16 +9,13 @@ namespace Code.Spawn.Comet
     public class PlanetController : MonoBehaviour
     {
         [SerializeField] private List<SpawnerBase> _spawnPlanet;
-
-        [SerializeField] private float _timeUpdatePlanet;
-
-
-        private float _elaspedTimeUpdate;
-
+        
         [SerializeField] private int _minSpawnWave;
         [SerializeField] private float _timeBetweenSpawn;
+        [SerializeField] private float _timeUpdatePlanet;
 
         private WaitForSeconds _waitForSeconds;
+        private float _elaspedTimeUpdate;
 
         private void Awake()
         {

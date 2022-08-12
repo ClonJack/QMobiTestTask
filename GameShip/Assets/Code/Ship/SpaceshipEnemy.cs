@@ -1,4 +1,5 @@
-﻿using Code.Pool;
+﻿using Code.Interfaces;
+using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Behavior.Enemy;
 using Code.Ship.Data.Ship;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Code.Ship
 {
-    public class SpaceshipEnemy : BaseShip
+    public class SpaceshipEnemy : BaseShip, IDamage
     {
         [SerializeField] private ShipOptionShot _shipOptionShot;
         [SerializeField] private float _timeOnShot;
@@ -33,7 +34,7 @@ namespace Code.Ship
             SetMove(new MoveEnemyBehavior(transform, _player, _randMove,
                 _timeOnUpdatePostionMove, _smothMove));
             SetAttack(new AttackEnemyBehavior(_shipOptionShot, _particleGun,
-                _lazerPool, this));
+                _lazerPool, this, this));
         }
 
         private void Update()
@@ -48,7 +49,7 @@ namespace Code.Ship
             }
         }
 
-        private void Damage()
+        public void TakeDamage()
         {
             var explosion = _effectPool.GetFreeObject().GetComponent<ParticleSystem>();
             explosion.gameObject.SetActive(true);
@@ -56,17 +57,6 @@ namespace Code.Ship
             explosion.Play();
 
             _enemyPool.ReturnToPool(gameObject);
-        }
-
-
-        private void OnEnable()
-        {
-            TakeDamageAction += Damage;
-        }
-
-        private void OnDisable()
-        {
-            TakeDamageAction -= Damage;
         }
     }
 }

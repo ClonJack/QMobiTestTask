@@ -15,7 +15,8 @@ namespace Code.Ship.Behavior.Player
         private readonly List<ParticleSystem> _particleGun;
         private readonly ObjectPool _objectPool;
 
-        public AttackPlayerBehavior(ShipOptionShot shipOptionShot,MonoBehaviour monoBehaviour,List<ParticleSystem> particleGun,
+        public AttackPlayerBehavior(ShipOptionShot shipOptionShot, MonoBehaviour monoBehaviour,
+            List<ParticleSystem> particleGun,
             ObjectPool objectPool)
         {
             _shipOptionShot = shipOptionShot;
@@ -55,9 +56,9 @@ namespace Code.Ship.Behavior.Player
 
                 if (hit.collider)
                 {
-                    if (hit.transform.TryGetComponent(out BaseShip baseShip))
+                    if (hit.transform.TryGetComponent(out IDamage damage))
                     {
-                        baseShip.TakeDamage();
+                        damage.TakeDamage();
                         _objectPool.ReturnToPool(lazer.gameObject);
                         yield break;
                     }

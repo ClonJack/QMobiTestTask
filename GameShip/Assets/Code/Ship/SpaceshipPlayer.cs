@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Code.Interfaces;
 using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Behavior.Player;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Code.Ship
 {
-    public class SpaceshipPlayer : BaseShip
+    public class SpaceshipPlayer : BaseShip, IDamage
     {
         [SerializeField] private ShipOptionMove _shipOptionMove;
         [SerializeField] private ShipOptionShot _shipOptionShot;
@@ -21,20 +22,23 @@ namespace Code.Ship
 
         private void Awake()
         {
-            SetMove(new MovePlayerBehavior(_shipOptionMove, _optionBoundCamera,_optionInput, transform));
-            SetAttack(new AttackPlayerBehavior(_shipOptionShot,this,_particleGun,_objectPool));
-            
+            SetMove(new MovePlayerBehavior(_shipOptionMove, _optionBoundCamera, _optionInput, transform));
+            SetAttack(new AttackPlayerBehavior(_shipOptionShot, this, _particleGun, _objectPool));
         }
-
 
         private void Update()
         {
-             Move.Move();
- 
-             if (Input.GetKeyDown(_optionInput.KeyOnAttack))
-             {
-                 Attack.Attack();
-             }
+            Move.Move();
+
+            if (Input.GetKeyDown(_optionInput.KeyOnAttack))
+            {
+                Attack.Attack();
+            }
+        }
+
+        public void TakeDamage()
+        {
+            Debug.Log(transform.name);
         }
     }
 }
