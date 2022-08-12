@@ -13,16 +13,24 @@ namespace Code.Planet
 
         [SerializeField] private float _speedMove;
         [SerializeField] private int _maxDebris = 2;
+        [SerializeField] private float _radiusAttack;
+
+        [SerializeField] private float _damage;
+
+        [SerializeField] private LayerMask _LayerAttack;
 
 
         private void Awake()
         {
             SetMove(new MoveEnemyPlanetBehavior(transform, _planetPool, _speedMove));
+            SetAttack(new AttackEnemyPlanetBehavior(transform, _LayerAttack, _radiusAttack,
+                _damage, this));
         }
 
         private void Update()
         {
             Move.Move();
+            Attack.Attack();
         }
 
         private void DoDebris()
@@ -39,7 +47,7 @@ namespace Code.Planet
             _planetPool.ReturnToPool(gameObject);
         }
 
-        public void TakeDamage()
+        public void TakeDamage(float damage)
         {
             var explosion = _poolEffect.GetFreeObject().GetComponent<ParticleSystem>();
             explosion.gameObject.SetActive(true);

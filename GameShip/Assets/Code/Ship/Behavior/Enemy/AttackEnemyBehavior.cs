@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using Code.Interfaces;
 using Code.Pool;
-using Code.Ship.Base;
 using Code.Ship.Data.Ship;
 using UnityEngine;
 
@@ -13,17 +12,16 @@ namespace Code.Ship.Behavior.Enemy
         private readonly ParticleSystem _particleGun;
         private readonly ObjectPool _lazerPool;
         private readonly MonoBehaviour _monoBehaviour;
-        private readonly IDamage _damage;
+
 
         public AttackEnemyBehavior(ShipOptionShot shipOptionShot,
             ParticleSystem particleGun, ObjectPool lazerPool
-            , MonoBehaviour monoBehaviour, IDamage damage)
+            , MonoBehaviour monoBehaviour)
         {
             _shipOptionShot = shipOptionShot;
             _particleGun = particleGun;
             _lazerPool = lazerPool;
             _monoBehaviour = monoBehaviour;
-            _damage = damage;
         }
 
         public void Attack()
@@ -56,7 +54,7 @@ namespace Code.Ship.Behavior.Enemy
                 {
                     if (hit.transform.TryGetComponent(out IDamage damage))
                     {
-                        damage.TakeDamage();
+                        damage.TakeDamage(_shipOptionShot.Damage);
                         _lazerPool.ReturnToPool(lazer.gameObject);
                         yield break;
                     }

@@ -34,9 +34,8 @@ namespace Code.Ship
             SetMove(new MoveEnemyBehavior(transform, _player, _randMove,
                 _timeOnUpdatePostionMove, _smothMove));
             SetAttack(new AttackEnemyBehavior(_shipOptionShot, _particleGun,
-                _lazerPool, this, this));
+                _lazerPool, this));
         }
-
         private void Update()
         {
             Move.Move();
@@ -48,8 +47,7 @@ namespace Code.Ship
                 Attack.Attack();
             }
         }
-
-        public void TakeDamage()
+        public void TakeDamage(float damage)
         {
             var explosion = _effectPool.GetFreeObject().GetComponent<ParticleSystem>();
             explosion.gameObject.SetActive(true);
