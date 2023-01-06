@@ -4,20 +4,17 @@ using Random = UnityEngine.Random;
 
 namespace Code.Spawn.Comet
 {
-    public class SpawnerPlanet : SpawnerBase
+    public class SpawnerPlanet : MonoBehaviour
     {
         [SerializeField] private int _minSpawnObject;
         [SerializeField] private int _maxSpawnObject;
-
-        [SerializeField] private ObjectPool _poolPlanets;
-
 
         [SerializeField] private Vector2 _randPosMin;
         [SerializeField] private Vector2 _randPosMax;
 
         [SerializeField] private Vector3 _mirrorDirectional;
 
-        public override void Spawn()
+        public void Spawn(ObjectPool poolPlanets)
         {
             if (_minSpawnObject > _maxSpawnObject)
             {
@@ -28,7 +25,7 @@ namespace Code.Spawn.Comet
 
             for (int i = 0; i < currentSpawnedObject; i++)
             {
-                var planet = _poolPlanets.GetFreeObject();
+                var planet = poolPlanets.GetFreeObject();
                 if (planet == null) return;
 
                 planet.SetParent(null);

@@ -1,4 +1,3 @@
-using System;
 using Code.Interfaces;
 using UnityEngine;
 
@@ -17,6 +16,10 @@ namespace Code.Ship.Base
         protected void SetAttack(IAttack attack)
         {
             Attack = attack;
+        }
+
+        public virtual void Init()
+        {
         }
     }
 }

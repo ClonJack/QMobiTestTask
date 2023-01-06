@@ -1,4 +1,5 @@
-﻿using Code.Interfaces;
+﻿using System.Threading;
+using Code.Interfaces;
 using Code.Pool;
 using Code.Ship.Base;
 using Code.Ship.Behavior.Enemy;
@@ -12,33 +13,55 @@ namespace Code.Ship
         [SerializeField] private ShipOptionShot _shipOptionShot;
         [SerializeField] private float _timeOnShot;
 
-        [Header("Option Move Ship")] [SerializeField]
-        private float _timeOnUpdatePostionMove;
-
+        [Header("Option Move Ship")]
         [SerializeField] private float _smothMove;
         [SerializeField] private Vector3Int _randMove;
 
-        [Header("Pool")] [SerializeField] private ObjectPool _lazerPool;
-        [SerializeField] private ObjectPool _effectPool;
-        [SerializeField] private ObjectPool _enemyPool;
+        [Header("Pool")] [SerializeField] private PoolService _poolService;
 
         [Header("Target Attack")] [SerializeField]
-        private Transform _player;
+        private Transform _target;
 
         [Header("Effect")] [SerializeField] private ParticleSystem _particleGun;
 
+        private CancellationTokenSource _tokenSource;
+
         private float _timeElapsedShot;
+        public CancellationTokenSource TokenSource => _tokenSource;
+        public ShipOptionShot ShipOptionShot => _shipOptionShot;
+        public PoolService PoolService => _poolService;
+        public ParticleSystem ParticleGun => _particleGun;
+        public float SmothMove => _smothMove;
+        public float TimeOnShot => _timeOnShot;
+        public Transform Target => _target;
+        public Vector3Int RandMove => _randMove;
 
-        private AttackEnemyBehavior _attackEnemyBehavior;
-
-        private void Awake()
+        public override void Init()
         {
-            SetMove(new MoveEnemyBehavior(transform, _player, _randMove,
-                _timeOnUpdatePostionMove, _smothMove));
+            _tokenSource = new CancellationTokenSource();
 
-            _attackEnemyBehavior = new AttackEnemyBehavior(_shipOptionShot, _particleGun,
-                _lazerPool, this);
-            SetAttack(_attackEnemyBehavior);
+            SetMove(new MoveEnemyBehavior(this));
+            SetAttack(new AttackEnemyBehavior(this));
+        }
+
+        public void TakeDamage(float damage)
+        {
+            var explosion = _poolService.PoolExplosion.GetFreeObject().GetComponent<ParticleSystem>();
+            explosion.gameObject.SetActive(true);
+            explosion.transform.position = transform.position;
+            explosion.Play();
+
+            _poolService.PoolEnemy.ReturnToPool(gameObject);
+        }
+
+        public void SetTarget(Transform target)
+        {
+            _target = target;
+        }
+
+        public void SetServicePool(PoolService poolService)
+        {
+            _poolService = poolService;
         }
 
         private void Update()
@@ -53,17 +76,9 @@ namespace Code.Ship
             }
         }
 
-        public void TakeDamage(float damage)
+        private void OnDestroy()
         {
-            var explosion = _effectPool.GetFreeObject().GetComponent<ParticleSystem>();
-            explosion.gameObject.SetActive(true);
-            explosion.transform.position = transform.position;
-            explosion.Play();
-
-            if (_attackEnemyBehavior.Lazer != null)
-                _lazerPool.ReturnToPool(_attackEnemyBehavior.Lazer.gameObject);
-
-            _enemyPool.ReturnToPool(gameObject);
+            _tokenSource.Cancel();
         }
     }
 }

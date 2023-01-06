@@ -1,7 +1,4 @@
 ﻿using Code.Interfaces;
-using Code.Ship.Data.Camera;
-using Code.Ship.Data.Input;
-using Code.Ship.Data.Ship;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Player
@@ -9,39 +6,32 @@ namespace Code.Ship.Behavior.Player
     [System.Serializable]
     public class MovePlayerBehavior : IMove
     {
-        private readonly ShipOptionMove _shipOption;
-        private readonly OptionInput _optionInput;
-        private readonly Transform _owner;
+        private readonly SpaceshipPlayer _player;
         private readonly Vector3 _maxBoundCamera;
         private readonly Vector3 _minBoundCamera;
-
 
         private Vector2 _currentVelocity;
         private float _axisVertical;
 
-
-        public MovePlayerBehavior(ShipOptionMove shipOption, OptionBoundCamera optionBoundCamera,
-            OptionInput optionInput, Transform owner)
+        public MovePlayerBehavior(SpaceshipPlayer player)
         {
-            _shipOption = shipOption;
-            _optionInput = optionInput;
-            _maxBoundCamera = Camera.main.ViewportToWorldPoint(optionBoundCamera.MaxBoundCamera);
-            _minBoundCamera = Camera.main.ViewportToWorldPoint(optionBoundCamera.MinBoundCamera);
-            _owner = owner;
+            _player = player;
+            _maxBoundCamera = Camera.main.ViewportToWorldPoint(player.OptionBoundCamera.MaxBoundCamera);
+            _minBoundCamera = Camera.main.ViewportToWorldPoint(player.OptionBoundCamera.MinBoundCamera);
         }
 
 
         public void Move()
         {
             _axisVertical = Mathf.SmoothStep(_axisVertical, Input.GetAxis("Vertical"),
-                _optionInput.SmothStepForwad * Time.deltaTime);
+                _player.OptionInput.SmothStepForwad * Time.deltaTime);
             if (_axisVertical != 0)
             {
-                var target = (_owner.up * (_shipOption.TargetMove * _axisVertical));
+                var target = (_player.transform.up * (_player.ShipOptionMove.TargetMove * _axisVertical));
 
-                var smothDamp = Vector2.SmoothDamp(_owner.transform.position, target, ref
+                var smothDamp = Vector2.SmoothDamp(_player.transform.position, target, ref
                     _currentVelocity,
-                    _shipOption.SmothSpeed, _shipOption.MaxSpeed);
+                    _player.ShipOptionMove.SmothSpeed, _player.ShipOptionMove.MaxSpeed);
 
                 if (smothDamp.y > _maxBoundCamera.y)
                 {
@@ -62,11 +52,12 @@ namespace Code.Ship.Behavior.Player
                     smothDamp = -smothDamp + Vector2.left;
                 }
 
-                _owner.transform.position = smothDamp;
+                _player.transform.position = smothDamp;
             }
 
-            var rotation = -(Input.GetAxis("Horizontal") * _shipOption.RotationSpeedShip) * Time.deltaTime;
-            _owner.Rotate(0, 0, rotation);
+            var rotation = -(Input.GetAxis("Horizontal") * _player.ShipOptionMove.RotationSpeedShip) * Time.deltaTime;
+            _player.transform.Rotate(0, 0, rotation);
+            _player.transform.Rotate(0, 0, rotation);
         }
     }
 }

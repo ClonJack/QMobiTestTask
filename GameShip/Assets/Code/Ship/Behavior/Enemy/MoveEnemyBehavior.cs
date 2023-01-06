@@ -5,30 +5,18 @@ namespace Code.Ship.Behavior.Enemy
 {
     public class MoveEnemyBehavior : IMove
     {
-        private readonly Transform _owner;
-        private readonly Transform _pointToMove;
-        private readonly Vector3Int _randomMove;
-        private readonly float _timeOnUpdate;
-        private readonly float _smothMove;
+        private readonly SpaceshipEnemy _spaceshipEnemy;
 
         private float _timeElapsedUpdate;
         private Vector3 _targetMove;
-
-
         private Vector3 _velocity;
 
-        public MoveEnemyBehavior(Transform owner, Transform pointToMove, Vector3Int randomMove, float timeOnUpdate,
-            float smothMove)
+        public MoveEnemyBehavior(SpaceshipEnemy spaceshipEnemy)
         {
-            _owner = owner;
-            _pointToMove = pointToMove;
-            _randomMove = randomMove;
-            _timeOnUpdate = timeOnUpdate;
-            _smothMove = smothMove;
-
-            _targetMove = pointToMove.position + _randomMove;
+            _spaceshipEnemy = spaceshipEnemy;
+            _targetMove = _spaceshipEnemy.transform.position +
+                          RandVector(_spaceshipEnemy.RandMove.x, _spaceshipEnemy.RandMove.y);
         }
-
 
         private Vector3 RandVector(int x, int y)
         {
@@ -37,21 +25,23 @@ namespace Code.Ship.Behavior.Enemy
 
         public void Move()
         {
-            Debug.DrawRay(_owner.position, -_owner.up * 5, Color.cyan);
+            Debug.DrawRay(_spaceshipEnemy.transform.position, -_spaceshipEnemy.transform.up * 5, Color.cyan);
 
-            if (_timeElapsedUpdate > _timeOnUpdate)
+            if (_timeElapsedUpdate > _spaceshipEnemy.TimeOnShot)
             {
                 _timeElapsedUpdate = 0;
-                _targetMove = _pointToMove.position + RandVector(_randomMove.x, _randomMove.y);
+                _targetMove = _spaceshipEnemy.Target.position +
+                              RandVector(_spaceshipEnemy.RandMove.x, _spaceshipEnemy.RandMove.y);
             }
 
-            _owner.position = Vector3.SmoothDamp(_owner.position, _targetMove, ref _velocity, _smothMove);
+            _spaceshipEnemy.transform.position = Vector3.SmoothDamp(_spaceshipEnemy.transform.position, _targetMove,
+                ref _velocity, _spaceshipEnemy.SmothMove);
 
-            var direction = _pointToMove.position - _owner.position;
-            var rotation = Quaternion.LookRotation(direction, _owner.forward);
+            var direction = _spaceshipEnemy.Target.position - _spaceshipEnemy.transform.position;
+            var rotation = Quaternion.LookRotation(direction, _spaceshipEnemy.transform.forward);
             rotation.y = 0;
             rotation.x = 0;
-            _owner.rotation = rotation;
+            _spaceshipEnemy.transform.rotation = rotation;
 
             _timeElapsedUpdate += Time.deltaTime;
         }

@@ -1,79 +1,68 @@
-﻿using System.Collections;
+﻿using System.Threading.Tasks;
 using Code.Interfaces;
-using Code.Pool;
-using Code.Ship.Data.Ship;
 using UnityEngine;
 
 namespace Code.Ship.Behavior.Enemy
 {
     public class AttackEnemyBehavior : IAttack
     {
-        private readonly ShipOptionShot _shipOptionShot;
-        private readonly ParticleSystem _particleGun;
-        private readonly ObjectPool _lazerPool;
-        private readonly MonoBehaviour _monoBehaviour;
-
+        private readonly SpaceshipEnemy _spaceshipEnemy;
         private Transform _lazer;
 
-        public Transform Lazer => _lazer;
-
-        public AttackEnemyBehavior(ShipOptionShot shipOptionShot,
-            ParticleSystem particleGun, ObjectPool lazerPool
-            , MonoBehaviour monoBehaviour)
+        public AttackEnemyBehavior(SpaceshipEnemy spaceshipEnemy)
         {
-            _shipOptionShot = shipOptionShot;
-            _particleGun = particleGun;
-            _lazerPool = lazerPool;
-            _monoBehaviour = monoBehaviour;
+            _spaceshipEnemy = spaceshipEnemy;
         }
 
         public void Attack()
         {
-            _particleGun.Play();
+            _spaceshipEnemy.ParticleGun.Play();
 
-            _lazer = _lazerPool.GetFreeObject();
+            _lazer = _spaceshipEnemy.PoolService.PoolLazer.GetFreeObject();
             _lazer.gameObject.SetActive(true);
-            _lazer.SetParent(_particleGun.transform);
+            _lazer.SetParent(_spaceshipEnemy.ParticleGun.transform);
 
             _lazer.localRotation = Quaternion.identity;
             _lazer.localPosition = Vector3.zero;
 
             _lazer.SetParent(null);
 
-            _monoBehaviour.StartCoroutine(Shot(-_lazer.transform.up * 5));
+            Shot(-_lazer.transform.up * 5);
         }
 
 
-        private IEnumerator Shot(Vector3 target)
+        private async void Shot(Vector3 target)
         {
             var timeElapsed = 0f;
-            while (true)
+            while (!_spaceshipEnemy.TokenSource.IsCancellationRequested)
             {
                 RaycastHit2D hit =
                     Physics2D.Raycast(_lazer.transform.position, _lazer.transform.up,
-                        _shipOptionShot.DistanceDetectedShot, _shipOptionShot.LayerAttack);
+                        _spaceshipEnemy.ShipOptionShot.DistanceDetectedShot,
+                        _spaceshipEnemy.ShipOptionShot.LayerAttack);
 
                 if (hit.collider)
                 {
                     if (hit.transform.TryGetComponent(out IDamage damage))
                     {
-                        damage.TakeDamage(_shipOptionShot.Damage);
-                        _lazerPool.ReturnToPool(_lazer.gameObject);
+                        damage.TakeDamage(_spaceshipEnemy.ShipOptionShot.Damage);
+                        _spaceshipEnemy.PoolService.PoolLazer.ReturnToPool(_lazer.gameObject);
                         _lazer = null;
-                        yield break;
+                        break;
                     }
                 }
 
-                _lazer.Translate(target * (_shipOptionShot.SpeedMoveLazer * Time.deltaTime), Space.World);
+                _lazer.Translate(target * (_spaceshipEnemy.ShipOptionShot.SpeedMoveLazer * Time.deltaTime),
+                    Space.World);
                 timeElapsed += Time.deltaTime;
 
-                if (timeElapsed > _shipOptionShot.TimeAliveLazer)
+                if (timeElapsed > _spaceshipEnemy.ShipOptionShot.TimeAliveLazer)
                 {
-                    _lazerPool.ReturnToPool(_lazer.gameObject);
-                    yield break;
+                    _spaceshipEnemy.PoolService.PoolLazer.ReturnToPool(_lazer.gameObject);
+                    break;
                 }
 
-                yield return null;
+                await Task.Yield();
             }
         }
     }

@@ -6,14 +6,11 @@ namespace Code.Pool
     public class ObjectPool : MonoBehaviour
     {
         [SerializeField] private GameObject _objectOnSpawn;
-
         [SerializeField] private List<GameObject> _objectsInPool;
-
         public List<GameObject> ObjectsPool => _objectsInPool;
-
         [SerializeField] private bool _isSpawnNew;
 
-        private void Awake()
+        public void Init()
         {
             for (int i = 0; i < transform.childCount; i++)
             {
@@ -35,7 +32,7 @@ namespace Code.Pool
         {
             foreach (var objTransform in _objectsInPool)
             {
-                if (!objTransform.activeSelf)
+                if (objTransform != null && !objTransform.activeSelf)
                 {
                     return objTransform.transform;
                 }
