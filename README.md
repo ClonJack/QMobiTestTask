@@ -21,6 +21,7 @@
 графическая составляющая — на ваше усмотрение
 --------------------------------
 Game:
+[видео](https://drive.google.com/file/d/14rUBNGG1WA4WSPhnv_BdzRzjP_0T6PNE/view?usp=sharing)
 --------------------------------
 Game Controll
 --------------------------------
