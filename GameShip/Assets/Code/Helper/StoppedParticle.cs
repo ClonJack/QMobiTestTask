@@ -1,7 +1,6 @@
-using Code.Pool;
 using UnityEngine;
 
-namespace Code.Helper
+namespace ShipGame
 {
     public class StoppedParticle : MonoBehaviour
     {

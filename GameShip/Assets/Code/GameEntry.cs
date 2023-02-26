@@ -1,13 +1,6 @@
-﻿using Code.Level;
-using Code.Pool;
-using Code.Ship;
-using Code.Ship.Base;
-using Code.Spawn.Comet;
-using Code.Spawn.Enemy;
-using Code.UI;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Code
+namespace ShipGame
 {
     public class GameEntry : MonoBehaviour
     {

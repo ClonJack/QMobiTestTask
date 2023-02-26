@@ -1,7 +1,6 @@
-﻿using Code.Interfaces;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Code.Ship.Behavior.Player
+namespace ShipGame
 {
     [System.Serializable]
     public class MovePlayerBehavior : IMove
@@ -16,15 +15,15 @@ namespace Code.Ship.Behavior.Player
         public MovePlayerBehavior(SpaceshipPlayer player)
         {
             _player = player;
-            _maxBoundCamera = Camera.main.ViewportToWorldPoint(player.OptionBoundCamera.MaxBoundCamera);
-            _minBoundCamera = Camera.main.ViewportToWorldPoint(player.OptionBoundCamera.MinBoundCamera);
+            _maxBoundCamera = Camera.main.ViewportToWorldPoint(player.ShipOptionBoundCamera.MaxBoundCamera);
+            _minBoundCamera = Camera.main.ViewportToWorldPoint(player.ShipOptionBoundCamera.MinBoundCamera);
         }
 
 
         public void Move()
         {
-            _axisVertical = Mathf.SmoothStep(_axisVertical, Input.GetAxis("Vertical"),
-                _player.OptionInput.SmothStepForwad * Time.deltaTime);
+            _axisVertical = Mathf.SmoothStep(_axisVertical, Input.GetAxis(_player.ShipOptionInput.KeyOnVerticalAxis),
+                _player.ShipOptionInput.SmoothStepForward * Time.deltaTime);
             if (_axisVertical != 0)
             {
                 var target = (_player.transform.up * (_player.ShipOptionMove.TargetMove * _axisVertical));
@@ -55,7 +54,7 @@ namespace Code.Ship.Behavior.Player
                 _player.transform.position = smothDamp;
             }
 
-            var rotation = -(Input.GetAxis("Horizontal") * _player.ShipOptionMove.RotationSpeedShip) * Time.deltaTime;
+            var rotation = -(Input.GetAxis(_player.ShipOptionInput.KeyOnHorizontalAxis) * _player.ShipOptionMove.RotationSpeedShip) * Time.deltaTime;
             _player.transform.Rotate(0, 0, rotation);
             _player.transform.Rotate(0, 0, rotation);
         }

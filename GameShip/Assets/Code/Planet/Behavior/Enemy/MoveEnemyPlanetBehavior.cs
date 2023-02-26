@@ -1,9 +1,6 @@
-﻿using Code.Interfaces;
-using Code.Pool;
-using UnityEngine;
+﻿using UnityEngine;
 
-
-namespace Code.Planet.Behavior.Enemy
+namespace ShipGame
 {
     public class MoveEnemyPlanetBehavior : IMove
     {

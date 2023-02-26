@@ -1,8 +1,7 @@
-﻿using Code.Pool;
-using UnityEngine;
+﻿using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Code.Spawn.Comet
+namespace ShipGame
 {
     public class SpawnerPlanet : MonoBehaviour
     {
@@ -11,8 +10,6 @@ namespace Code.Spawn.Comet
 
         [SerializeField] private Vector2 _randPosMin;
         [SerializeField] private Vector2 _randPosMax;
-
-        [SerializeField] private Vector3 _mirrorDirectional;
 
         public void Spawn(ObjectPool poolPlanets)
         {
@@ -23,14 +20,13 @@ namespace Code.Spawn.Comet
 
             var currentSpawnedObject = Random.Range(_minSpawnObject, _maxSpawnObject);
 
-            for (int i = 0; i < currentSpawnedObject; i++)
+            for (var i = 0; i < currentSpawnedObject; i++)
             {
                 var planet = poolPlanets.GetFreeObject();
                 if (planet == null) return;
 
                 planet.SetParent(null);
-
-
+                
                 planet.position =
                     Camera.main.ViewportToWorldPoint(new Vector3(
                         Random.Range(_randPosMin.x, _randPosMax.x),

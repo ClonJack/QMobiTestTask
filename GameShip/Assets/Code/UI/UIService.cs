@@ -1,8 +1,7 @@
-﻿using Code.Ship;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Code.UI
+namespace ShipGame
 {
     public class UIService : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Code.Ship.Data.Ship
+namespace ShipGame
 {
     [System.Serializable]
     public class ShipOptionShot

@@ -1,7 +1,6 @@
-using Code.Interfaces;
 using UnityEngine;
 
-namespace Code.Planet
+namespace ShipGame
 {
     public abstract class PlanetBase : MonoBehaviour
     {

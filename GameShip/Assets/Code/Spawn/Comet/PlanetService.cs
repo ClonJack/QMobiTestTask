@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Code.Pool;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Code.Spawn.Comet
+namespace ShipGame
 {
     public class PlanetService : MonoBehaviour
     {
@@ -26,8 +25,7 @@ namespace Code.Spawn.Comet
         private async void UpdatePlanets()
         {
             var randSpawner = Random.Range(_minSpawnWave, _spawnPlanet.Count);
-
-            for (int i = 0; i < randSpawner; i++)
+            for (var i = 0; i < randSpawner; i++)
             {
                 _spawnPlanet[i].Spawn(_poolService.PoolPlanets);
                 await Task.Delay(_millisecondsDelayBetweenSpawn);
@@ -41,7 +39,6 @@ namespace Code.Spawn.Comet
                 _elaspedTimeUpdate = 0;
                 UpdatePlanets();
             }
-
             _elaspedTimeUpdate += Time.deltaTime;
         }
     }

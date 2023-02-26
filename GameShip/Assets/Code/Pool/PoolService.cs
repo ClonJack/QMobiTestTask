@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Code.Pool
+namespace ShipGame
 {
     public class PoolService : MonoBehaviour
     {

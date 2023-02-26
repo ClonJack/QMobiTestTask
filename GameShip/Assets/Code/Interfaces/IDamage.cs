@@ -1,4 +1,4 @@
-﻿namespace Code.Interfaces
+﻿namespace ShipGame
 {
     public interface IDamage
     {

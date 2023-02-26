@@ -1,12 +1,7 @@
 ﻿using System.Threading;
-using Code.Interfaces;
-using Code.Pool;
-using Code.Ship.Base;
-using Code.Ship.Behavior.Enemy;
-using Code.Ship.Data.Ship;
 using UnityEngine;
 
-namespace Code.Ship
+namespace ShipGame
 {
     public class SpaceshipEnemy : BaseShip, IDamage
     {

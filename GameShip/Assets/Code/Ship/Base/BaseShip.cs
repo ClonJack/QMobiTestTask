@@ -1,7 +1,6 @@
-using Code.Interfaces;
 using UnityEngine;
 
-namespace Code.Ship.Base
+namespace ShipGame
 {
     public abstract class BaseShip : MonoBehaviour
     {

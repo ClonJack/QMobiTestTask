@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Code.Pool
+namespace ShipGame
 {
     public class ObjectPool : MonoBehaviour
     {
@@ -12,7 +12,7 @@ namespace Code.Pool
 
         public void Init()
         {
-            for (int i = 0; i < transform.childCount; i++)
+            for (var i = 0; i < transform.childCount; i++)
             {
                 _objectsInPool.Add(transform.GetChild(i).gameObject);
                 _objectsInPool[i].gameObject.SetActive(false);

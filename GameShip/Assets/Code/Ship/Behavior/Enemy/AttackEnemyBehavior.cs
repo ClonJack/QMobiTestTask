@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Code.Interfaces;
 using UnityEngine;
 
-namespace Code.Ship.Behavior.Enemy
+namespace ShipGame
 {
     public class AttackEnemyBehavior : IAttack
     {

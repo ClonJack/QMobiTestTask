@@ -1,8 +1,6 @@
-﻿using Code.Interfaces;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Code.Planet.Behavior.Enemy
+namespace ShipGame
 {
     public class AttackEnemyPlanetBehavior : IAttack
     {

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace Code.Ship.Data.Camera
+namespace ShipGame
 {
     [System.Serializable]
-    public class OptionBoundCamera
+    public class ShipOptionBoundCamera
     {
         [Header("Option Bound ")] 
         [SerializeField] private Vector3 _minBoundCamera;

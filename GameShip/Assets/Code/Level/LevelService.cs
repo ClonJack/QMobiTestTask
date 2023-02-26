@@ -1,7 +1,6 @@
-﻿using Code.Ship;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine.SceneManagement;
 
-namespace Code.Level
+namespace ShipGame
 {
     [System.Serializable]
     public class LevelService

@@ -4779,20 +4779,18 @@ MonoBehaviour:
     _layerAttack:
       serializedVersion: 2
       m_Bits: 136
-  _optionInput:
-    _keyOnAttack: 32
-    _smothStepForward: 50
-  _optionBoundCamera:
+  _shipOptionInput:
+    _keyOnAttack: Attack
+    _smoothStepForward: 50
+  _shipOptionBoundCamera:
     _minBoundCamera: {x: 0, y: 0, z: 0}
     _maxBoundCamera: {x: 1, y: 1, z: 0}
   _particleGun:
   - {fileID: 6482032147950151576}
   - {fileID: 6482894686920852126}
   - {fileID: 6482850022342203434}
-  _effectPool: {fileID: 0}
-  _lazerPool: {fileID: 0}
+  _poolService: {fileID: 0}
   _health: 10000
-  _hpBar: {fileID: 0}
 --- !u!61 &6469155390876565915
 BoxCollider2D:
   m_ObjectHideFlags: 0

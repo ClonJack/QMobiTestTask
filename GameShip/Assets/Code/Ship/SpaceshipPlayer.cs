@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Code.Interfaces;
-using Code.Level;
-using Code.Pool;
-using Code.Ship.Base;
-using Code.Ship.Behavior.Player;
-using Code.Ship.Data.Camera;
-using Code.Ship.Data.Input;
-using Code.Ship.Data.Ship;
 using UnityEngine;
 
-namespace Code.Ship
+namespace ShipGame
 {
     public class SpaceshipPlayer : BaseShip, IDamage, ICancellationToken
     {
         [SerializeField] private ShipOptionMove _shipOptionMove;
         [SerializeField] private ShipOptionShot _shipOptionShot;
-        [SerializeField] private OptionInput _optionInput;
-        [SerializeField] private OptionBoundCamera _optionBoundCamera;
+        [SerializeField] private ShipOptionInput _shipOptionInput;
+        [SerializeField] private ShipOptionBoundCamera _shipOptionBoundCamera;
 
         [Header("Effects ")] [SerializeField] private List<ParticleSystem> _particleGun;
         [SerializeField] private PoolService _poolService;
@@ -34,8 +26,8 @@ namespace Code.Ship
         public PoolService PoolService => _poolService;
         public ShipOptionMove ShipOptionMove => _shipOptionMove;
         public ShipOptionShot ShipOptionShot => _shipOptionShot;
-        public OptionInput OptionInput => _optionInput;
-        public OptionBoundCamera OptionBoundCamera => _optionBoundCamera;
+        public ShipOptionInput ShipOptionInput => _shipOptionInput;
+        public ShipOptionBoundCamera ShipOptionBoundCamera => _shipOptionBoundCamera;
 
         public override void Init()
         {
@@ -54,7 +46,7 @@ namespace Code.Ship
         {
             Move.Move();
 
-            if (Input.GetKeyDown(_optionInput.KeyOnAttack))
+            if (Input.GetButtonDown(_shipOptionInput.KeyOnAttack))
             {
                 Attack.Attack();
             }
@@ -75,12 +67,7 @@ namespace Code.Ship
             gameObject.SetActive(false);
             OnDeath.Invoke();
         }
-
-        private void OnChangeLevel()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void OnDestroy()
         {
             OnDeath = null;

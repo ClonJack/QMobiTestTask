@@ -1,9 +1,7 @@
-using Code.Pool;
-using Code.Ship;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Code.Spawn.Enemy
+namespace ShipGame
 {
     public class EnemyService : MonoBehaviour
     {
